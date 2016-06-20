@@ -30,6 +30,7 @@ public class Tablet extends Observable {
                 ConsoleHelper.writeMessage(order.toString());
                 setChanged();
                 notifyObservers(order);
+                ///
                 new AdvertisementManager(order.getTotalCookingTime() * 60).processVideos();
             }
 

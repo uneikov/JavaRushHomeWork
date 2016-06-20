@@ -78,19 +78,20 @@ public class AdvertisementManager {
             }
 
             if (time > timeSeconds) return;
+
+            //?????????????????????/
             if (!(price > bestPrice)) {
                 if (!(price == bestPrice && time > maxTime)){
                     if (!(price == bestPrice && time == maxTime && list.size() < numberOfClips)){
                         return;
                     }
                 }
-            }else {
-                bestAds = list;
-                bestPrice = price;
-                maxTime = time;
-                numberOfClips = list.size();
             }
-
+            //???
+            bestAds = list;
+            bestPrice = price;
+            maxTime = time;
+            numberOfClips = list.size();
         }
 
         private class BinaryPattern{
