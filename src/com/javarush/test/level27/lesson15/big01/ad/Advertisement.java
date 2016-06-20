@@ -2,6 +2,7 @@ package com.javarush.test.level27.lesson15.big01.ad;
 
 
 public class Advertisement {
+
     private Object content;
     private String name;
     private long initialAmount;
@@ -31,8 +32,7 @@ public class Advertisement {
     }
 
     public void revalidate(){
-        if (hits <= 0)
-            throw new UnsupportedOperationException();
+        if (hits <= 0) throw new UnsupportedOperationException();
         hits--;
     }
 }

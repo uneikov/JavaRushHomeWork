@@ -19,7 +19,7 @@ public class Order {
 
     public int getTotalCookingTime(){
         int result = 0;
-        for (Dish dish :dishes) result += dish.getDuration();
+        for (Dish dish : dishes) result += dish.getDuration();
         return result;
     }
 
@@ -29,7 +29,7 @@ public class Order {
 
     @Override
     public String toString() {
-        if (dishes.size() == 0) return "";
+        if (dishes.isEmpty()) return "";
         else {
             return String.format("Your order: %s of %s", dishes.toString(), tablet.toString());
         }

@@ -19,8 +19,6 @@ public class Restaurant {
         //tablet7.addObserver(cook);
 
         tablet5.createOrder();
-        //tablet6.createOrder();
-        //tablet7.createOrder();
 
     }
 

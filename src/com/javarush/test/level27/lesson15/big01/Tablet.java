@@ -30,9 +30,8 @@ public class Tablet extends Observable {
                 ConsoleHelper.writeMessage(order.toString());
                 setChanged();
                 notifyObservers(order);
+                new AdvertisementManager(order.getTotalCookingTime() * 60).processVideos();
             }
-
-            new AdvertisementManager(order.getTotalCookingTime() * 60).processVideos();
 
         }catch (IOException ioerr){
             logger.log(Level.SEVERE, "Console is unavailable.");
@@ -46,10 +45,6 @@ public class Tablet extends Observable {
         return "Tablet{" +
                 "number=" + number +
                 '}';
-    }
-
-    public int getNumber() {
-        return number;
     }
 
 }

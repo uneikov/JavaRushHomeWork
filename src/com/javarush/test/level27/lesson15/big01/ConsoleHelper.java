@@ -24,15 +24,18 @@ public class ConsoleHelper {
     }
 
     public static List<Dish> getAllDishesForOrder() throws IOException{
+
         List<Dish> result = new ArrayList<>();
-        boolean validDish = false;
+        boolean validDish;
+        String nextDish;
         Dish[] dishes = Dish.values();
         writeMessage("Choose dish from the menu, please");
         writeMessage(Dish.allDishesToString());
-        String nextDish;
+
         while (true){
             nextDish = readString();
             if (nextDish.equalsIgnoreCase("exit")) break;
+            validDish = false;
             for (int i = 0; i < dishes.length ; i++) {
                 if (dishes[i].toString().equals(nextDish)) {
                     result.add(dishes[i]);
@@ -40,8 +43,7 @@ public class ConsoleHelper {
                     break;
                 }
             }
-            if (validDish) validDish = false;
-            else if (!nextDish.equals("")) writeMessage(nextDish + " is not detected");
+            if (!validDish) writeMessage(nextDish + " is not detected");
         }
 
         return result;
