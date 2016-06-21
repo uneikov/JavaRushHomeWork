@@ -34,4 +34,12 @@ public class Order {
             return String.format("Your order: %s of %s", dishes.toString(), tablet.toString());
         }
     }
+
+    public Tablet getTablet() {
+        return tablet;
+    }
+
+    public List<Dish> getDishes() {
+        return dishes;
+    }
 }

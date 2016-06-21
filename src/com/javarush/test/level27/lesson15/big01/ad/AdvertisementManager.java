@@ -1,6 +1,8 @@
 package com.javarush.test.level27.lesson15.big01.ad;
 
 import com.javarush.test.level27.lesson15.big01.ConsoleHelper;
+import com.javarush.test.level27.lesson15.big01.statistic.StatisticManager;
+import com.javarush.test.level27.lesson15.big01.statistic.event.VideoSelectedEventDataRow;
 
 import java.util.*;
 
@@ -18,7 +20,8 @@ public class AdvertisementManager {
 
         if(storage.list().isEmpty()) throw new NoVideoAvailableException();
 
-        List<Advertisement> bestAds = new VideoHelper().findAllYouNeed();
+        VideoHelper videoHelper = new VideoHelper();
+        List<Advertisement> bestAds = videoHelper.findAllYouNeed();
 
         Collections.sort(bestAds, new Comparator<Advertisement>() {
             @Override
@@ -29,10 +32,19 @@ public class AdvertisementManager {
             }
         });
 
+        StatisticManager.getInstance().register(
+                new VideoSelectedEventDataRow(
+                        bestAds,
+                        videoHelper.getBestPrice(),
+                        videoHelper.getMaxTime()
+                )
+        );
+
         for (Advertisement ad : bestAds){
             ConsoleHelper.writeMessage( ad.getName() + " is displaying... " +
                     ad.getAmountPerOneDisplaying() + ", " +
-                    1000 * ad.getAmountPerOneDisplaying()/ad.getDuration() );
+                    1000 * ad.getAmountPerOneDisplaying()/ad.getDuration()
+            );
             ad.revalidate();
         }
     }
@@ -121,6 +133,14 @@ public class AdvertisementManager {
 
             public boolean full(){return count == (int)Math.pow(2, length)-1;}
 
+        }
+
+        public int getBestPrice() {
+            return bestPrice;
+        }
+
+        public int getMaxTime() {
+            return maxTime;
         }
     }
 }
