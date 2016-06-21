@@ -28,6 +28,7 @@ public class ConsoleHelper {
         List<Dish> result = new ArrayList<>();
         boolean validDish;
         String nextDish;
+
         Dish[] dishes = Dish.values();
         writeMessage("Choose dish from the menu, please");
         writeMessage(Dish.allDishesToString());

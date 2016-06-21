@@ -1,20 +1,22 @@
 package com.javarush.test.level27.lesson15.big01.ad;
 
-
 import com.javarush.test.level27.lesson15.big01.ConsoleHelper;
 
 import java.util.*;
 
 public class AdvertisementManager {
 
-    private  final AdvertisementStorage storage = AdvertisementStorage.getInstance();
     private int timeSeconds;
+    private final AdvertisementStorage storage = AdvertisementStorage.getInstance();
 
     public AdvertisementManager(int timeSeconds) {
         this.timeSeconds = timeSeconds;
     }
 
+
     public void processVideos() throws NoVideoAvailableException{
+
+        if(storage.list().isEmpty()) throw new NoVideoAvailableException();
 
         List<Advertisement> bestAds = new VideoHelper().findAllYouNeed();
 
@@ -46,7 +48,7 @@ public class AdvertisementManager {
         public List<Advertisement> findAllYouNeed(){
 
             for (Advertisement ad: storage.list()) {
-                if (ad.getDuration() <= timeSeconds)
+                if (ad.getDuration() <= timeSeconds && ad.getHits() > 0)
                     candidates.add(ad);
             }
 
@@ -54,6 +56,7 @@ public class AdvertisementManager {
                 throw new NoVideoAvailableException();
             }
             else findBestAds(new BinaryPattern(candidates.size()));
+
             return bestAds;
         }
 
@@ -79,7 +82,6 @@ public class AdvertisementManager {
 
             if (time > timeSeconds) return;
 
-            //?????????????????????/
             if (!(price > bestPrice)) {
                 if (!(price == bestPrice && time > maxTime)){
                     if (!(price == bestPrice && time == maxTime && list.size() < numberOfClips)){
@@ -87,7 +89,7 @@ public class AdvertisementManager {
                     }
                 }
             }
-            //???
+
             bestAds = list;
             bestPrice = price;
             maxTime = time;
