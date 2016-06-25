@@ -49,6 +49,10 @@ public class AdvertisementManager {
         }
     }
 
+    public AdvertisementStorage getStorage() {
+        return storage;
+    }
+
     private class VideoHelper {
 
         private int bestPrice = 0;

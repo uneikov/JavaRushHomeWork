@@ -16,7 +16,7 @@ public class Advertisement {
         this.initialAmount = initialAmount;
         this.hits = hits;
         this.duration = duration;
-        this.amountPerOneDisplaying = initialAmount / hits;
+        if (hits > 0) this.amountPerOneDisplaying = initialAmount/hits;
     }
 
     public String getName() {
@@ -38,5 +38,6 @@ public class Advertisement {
     public void revalidate(){
         if (hits <= 0) throw new UnsupportedOperationException();
         hits--;
+        if (hits == 1) amountPerOneDisplaying += initialAmount % amountPerOneDisplaying;
     }
 }

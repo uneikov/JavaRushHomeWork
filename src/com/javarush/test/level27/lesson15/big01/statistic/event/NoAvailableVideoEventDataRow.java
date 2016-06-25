@@ -14,11 +14,13 @@ public class NoAvailableVideoEventDataRow  implements EventDataRow{
         this.currentDate = new Date();
     }
 
-    public int getTotalDuration() {
+    @Override
+    public int getTime() {
         return totalDuration;
     }
 
-    public Date getCurrentDate() {
+    @Override
+    public Date getDate() {
         return currentDate;
     }
 
