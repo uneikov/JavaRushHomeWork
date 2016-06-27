@@ -15,10 +15,8 @@ public class Restaurant {
     {
 
         List<Tablet> tablets = new ArrayList<>();
-        tablets.add(new Tablet(1));
-        tablets.add(new Tablet(2));
-        tablets.add(new Tablet(3));
-        tablets.add(new Tablet(4));
+
+
 
         Cook cook1 = new Cook("James Cook");
         Cook cook2 = new Cook("Joe Cooker");
@@ -31,10 +29,11 @@ public class Restaurant {
         cook1.addObserver(waitor1);
         cook2.addObserver(waitor1);
 
-        tablets.get(0).addObserver(cook1);
-        tablets.get(1).addObserver(cook1);
-        tablets.get(2).addObserver(cook2);
-        tablets.get(3).addObserver(cook2);
+        for (int i = 0; i < 5 ; i++) {
+            tablets.add(new Tablet(i));
+            tablets.get(i).addObserver(cook1);
+            tablets.get(i).addObserver(cook2);
+        }
 
 
         Thread task = new Thread(new RandomOrderGeneratorTask(tablets, ORDER_CREATING_INTERVAL));
