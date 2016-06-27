@@ -4,7 +4,8 @@ package com.javarush.test.level27.lesson15.big01;
 import com.javarush.test.level27.lesson15.big01.ad.AdvertisementManager;
 import com.javarush.test.level27.lesson15.big01.ad.NoVideoAvailableException;
 import com.javarush.test.level27.lesson15.big01.kitchen.Order;
-import com.javarush.test.level27.lesson15.big01.statistic.StatisticManager;
+import com.javarush.test.level27.lesson15.big01.kitchen.TestOrder;
+import com.javarush.test.level27.lesson15.big01.statistic.StatisticEventManager;
 import com.javarush.test.level27.lesson15.big01.statistic.event.NoAvailableVideoEventDataRow;
 
 import java.io.IOException;
@@ -25,21 +26,35 @@ public class Tablet extends Observable {
 
         Order order = null;
         try {
-
             order = new Order(this);
-
-            if (!order.isEmpty()) {
-                ConsoleHelper.writeMessage(order.toString());
-                setChanged();
-                notifyObservers(order);
-                new AdvertisementManager(order.getTotalCookingTime() * 60).processVideos();
-            }
-
+            processOrder(order);
         }catch (IOException e){
             logger.log(Level.SEVERE, "Console is unavailable.");
-        }catch (NoVideoAvailableException novideo){
-            StatisticManager.getInstance().register(new NoAvailableVideoEventDataRow(order.getTotalCookingTime() * 60));
+        } catch (NoVideoAvailableException novideo){
+            StatisticEventManager.getInstance().register(new NoAvailableVideoEventDataRow(order.getTotalCookingTime() * 60));
             logger.log(Level.INFO, "No video is available for the order " + order);
+        }
+    }
+
+    public void createTestOrder(){
+        TestOrder order = null;
+        try {
+            order = new TestOrder(this);
+            processOrder(order);
+        }catch (IOException e){
+            logger.log(Level.SEVERE, "Console is unavailable.");
+        } catch (NoVideoAvailableException novideo){
+            StatisticEventManager.getInstance().register(new NoAvailableVideoEventDataRow(order.getTotalCookingTime() * 60));
+            logger.log(Level.INFO, "No video is available for the order " + order);
+        }
+    }
+
+    private void processOrder(Order order) {
+        if (!order.isEmpty()) {
+            ConsoleHelper.writeMessage(order.toString());
+            setChanged();
+            notifyObservers(order);
+            new AdvertisementManager(order.getTotalCookingTime() * 60).processVideos();
         }
     }
 

@@ -10,10 +10,14 @@ import java.util.List;
 public class Order {
 
     private Tablet tablet;
-    private List<Dish> dishes;
+    protected List<Dish> dishes;
 
     public Order(Tablet tablet) throws IOException{
         this.tablet = tablet;
+        initDishes();
+    }
+
+    protected void initDishes() throws IOException{
         this.dishes = ConsoleHelper.getAllDishesForOrder();
     }
 

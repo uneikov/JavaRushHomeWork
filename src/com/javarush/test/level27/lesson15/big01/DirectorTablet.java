@@ -1,20 +1,19 @@
 package com.javarush.test.level27.lesson15.big01;
 
 
-import com.javarush.test.level27.lesson15.big01.statistic.StatisticManager;
+import com.javarush.test.level27.lesson15.big01.ad.Advertisement;
+import com.javarush.test.level27.lesson15.big01.ad.StatisticAdvertisementManager;
+import com.javarush.test.level27.lesson15.big01.statistic.StatisticEventManager;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 public class DirectorTablet {
 
     public void printAdvertisementProfit(){
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
-        TreeMap<Date, Long> data = StatisticManager.getInstance().getAdvertisementProfit();
+        TreeMap<Date, Long> data = StatisticEventManager.getInstance().getAdvertisementProfit();
         long total = 0;
 
         if (data.isEmpty()) return;
@@ -32,7 +31,7 @@ public class DirectorTablet {
     public void printCookWorkloading(){
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
-        TreeMap<Date, TreeMap<String, Integer>> data = StatisticManager.getInstance().getCookWorkloading();
+        TreeMap<Date, TreeMap<String, Integer>> data = StatisticEventManager.getInstance().getCookWorkloading();
 
         if (data.isEmpty()) return;
 
@@ -47,12 +46,31 @@ public class DirectorTablet {
         }
     }
 
-
     public void printActiveVideoSet(){
-
+        List<Advertisement> videoSet = StatisticAdvertisementManager.getInstance().getActiveVideoSet();
+        Collections.sort(videoSet, new Comparator<Advertisement>() {
+            @Override
+            public int compare(Advertisement o1, Advertisement o2) {
+                return o1.getName().compareToIgnoreCase(o2.getName());
+            }
+        });
+        for (Advertisement ad : videoSet) {
+            ConsoleHelper.writeMessage(String.format("%s - %d", ad.getName(), ad.getHits())
+            );
+        }
     }
 
     public void printArchivedVideoSet(){
-
+        List<Advertisement> videoSet = StatisticAdvertisementManager.getInstance().getArhivedVideoSet();
+        Collections.sort(videoSet, new Comparator<Advertisement>() {
+            @Override
+            public int compare(Advertisement o1, Advertisement o2) {
+                return o1.getName().compareToIgnoreCase(o2.getName());
+            }
+        });
+        for (Advertisement ad : videoSet) {
+            ConsoleHelper.writeMessage(ad.getName()
+            );
+        }
     }
 }

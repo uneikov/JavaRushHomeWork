@@ -1,7 +1,7 @@
 package com.javarush.test.level27.lesson15.big01.ad;
 
 import com.javarush.test.level27.lesson15.big01.ConsoleHelper;
-import com.javarush.test.level27.lesson15.big01.statistic.StatisticManager;
+import com.javarush.test.level27.lesson15.big01.statistic.StatisticEventManager;
 import com.javarush.test.level27.lesson15.big01.statistic.event.VideoSelectedEventDataRow;
 
 import java.util.*;
@@ -32,7 +32,7 @@ public class AdvertisementManager {
             }
         });
 
-        StatisticManager.getInstance().register(
+        StatisticEventManager.getInstance().register(
                 new VideoSelectedEventDataRow(
                         bestAds,
                         videoHelper.getBestPrice(),
