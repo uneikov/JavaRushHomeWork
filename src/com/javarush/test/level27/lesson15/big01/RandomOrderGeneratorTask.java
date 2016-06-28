@@ -19,7 +19,9 @@ public class RandomOrderGeneratorTask implements Runnable {
 
         while (!Thread.currentThread().isInterrupted()){
             Tablet tablet = tablets.get((int)(ThreadLocalRandom.current().nextDouble(1) * tablets.size()));
+
             tablet.createTestOrder();
+
             try {
                 Thread.sleep(interval);
             }catch (InterruptedException ignored){

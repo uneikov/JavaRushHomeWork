@@ -30,6 +30,10 @@ public class StatisticEventManager {
         cooks.add(cook);
     }
 
+    public Set<Cook> getCooks() {
+        return cooks;
+    }
+
     private class StatisticStorage {
 
         private Map<EventType, List<EventDataRow>> eventMapStorage = new HashMap<>();

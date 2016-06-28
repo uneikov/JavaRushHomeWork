@@ -13,10 +13,9 @@ public class Restaurant {
 
     public static void main(String[] args)
     {
+        OrderManager orderManager = new OrderManager();
 
         List<Tablet> tablets = new ArrayList<>();
-
-
 
         Cook cook1 = new Cook("James Cook");
         Cook cook2 = new Cook("Joe Cooker");
@@ -29,10 +28,15 @@ public class Restaurant {
         cook1.addObserver(waitor1);
         cook2.addObserver(waitor1);
 
+        cook1.addObserver(orderManager);
+        cook2.addObserver(orderManager);
+
+
+
         for (int i = 0; i < 5 ; i++) {
             tablets.add(new Tablet(i));
-            tablets.get(i).addObserver(cook1);
-            tablets.get(i).addObserver(cook2);
+            tablets.get(i).addObserver(orderManager);
+            tablets.get(i).addObserver(orderManager);
         }
 
 
