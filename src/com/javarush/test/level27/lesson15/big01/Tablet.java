@@ -9,17 +9,22 @@ import com.javarush.test.level27.lesson15.big01.statistic.StatisticEventManager;
 import com.javarush.test.level27.lesson15.big01.statistic.event.NoAvailableVideoEventDataRow;
 
 import java.io.IOException;
-import java.util.Observable;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Tablet extends Observable {
+public class Tablet  {
 
     private final int number;
     private static java.util.logging.Logger logger = Logger.getLogger(Tablet.class.getName());
+    private LinkedBlockingQueue<Order> queue;
 
     public Tablet(int number) {
         this.number = number;
+    }
+
+    public void setQueue(LinkedBlockingQueue<Order> queue) {
+        this.queue = queue;
     }
 
     public void createOrder()  {
@@ -52,8 +57,7 @@ public class Tablet extends Observable {
     private void processOrder(Order order) {
         if (!order.isEmpty()) {
             ConsoleHelper.writeMessage(order.toString());
-            setChanged();
-            notifyObservers(order);
+            queue.offer(order);  // put order to queue for cooking ...
             new AdvertisementManager(order.getTotalCookingTime() * 60).processVideos();
         }
     }
