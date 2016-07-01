@@ -6,7 +6,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class MyThread extends Thread{
 
     private static final AtomicInteger priority = new AtomicInteger(1);
-    private static final int NON_VALID_PRIORITY = 11;
 
     public MyThread() {
         setPriority();
@@ -49,7 +48,7 @@ public class MyThread extends Thread{
     }
 
     private void setPriority(){
-        priority.compareAndSet(NON_VALID_PRIORITY, MIN_PRIORITY);
-        this.setPriority(priority.getAndIncrement());
+        priority.compareAndSet(MAX_PRIORITY + 1, MIN_PRIORITY); // compare AtomicInteger not simple task
+        this.setPriority(priority.getAndIncrement()); // this !!! not Thread.currentThread() !!!
     }
 }
