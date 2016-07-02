@@ -46,7 +46,7 @@ public class Solution {
         return new Callable<String>() {
             @Override
             public String call() throws Exception {
-                return String.format("%s", Long.toString((long) ((1.0+(double) i)*((double) i)/2)));
+                return String.format("%s", Long.toString((long) ((1.0+ i)* i)/2));
             }
         };
     }
