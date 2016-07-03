@@ -7,9 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Created by URAN on 02.07.2016.
- */
+
 public class Controller {
 
     private Provider[] providers;
@@ -32,14 +30,16 @@ public class Controller {
     public void scan() {
 
         List<Vacancy> allVacancies = new ArrayList<>();
-
         List<Vacancy> currentVacancies;
+
         for (Provider currentProvider : providers){
-            currentVacancies = currentProvider.getJavaVacancies("java Киев");
             try {
-                allVacancies.addAll(currentVacancies);
+                currentVacancies = currentProvider.getJavaVacancies("kiev");
+                if(!currentVacancies.isEmpty())allVacancies.addAll(currentVacancies);
+                currentVacancies.clear();
             }catch (NullPointerException npe) {}
         }
         System.out.println(allVacancies.size());
+
     }
 }
