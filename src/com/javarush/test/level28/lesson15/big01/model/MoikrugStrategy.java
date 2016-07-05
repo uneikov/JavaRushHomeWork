@@ -10,10 +10,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Created by URAN on 05.07.2016.
+ */
+public class MoikrugStrategy implements Strategy {
 
-public class HHStrategy implements Strategy {
-
-    private static final String URL_FORMAT = "http://hh.ru/search/vacancy?text=java+%s&page=%d";
+    private static final String URL_FORMAT = "https://moikrug.ru/vacancies?q=java+%s&page=%d";
 
     @Override
     public List<Vacancy> getVacancies(String searchString) {
@@ -21,29 +23,34 @@ public class HHStrategy implements Strategy {
         List<Vacancy> vacancyList = new ArrayList<>();
 
         try {
+
             Document doc;
+
             for (int i = 0; true; i++) {
 
-                 doc = getDocument(searchString, i);
+                doc = getDocument(searchString, i);
 
                 if (doc == null) break;
 
-                Elements vacancies = doc.getElementsByAttributeValue("data-qa", "vacancy-serp__vacancy");
+                Elements vacancies = doc.getElementsByClass("job");
 
-                if(vacancies.isEmpty()) break;
+                if (vacancies.isEmpty()) break;
 
                 for (Element element : vacancies) {
                     Vacancy vacancy = new Vacancy();
                     vacancy.setSiteName(doc.title());
-                    vacancy.setTitle(element.getElementsByAttributeValue("data-qa", "vacancy-serp__vacancy-title").text());
-                    vacancy.setCity(element.getElementsByAttributeValue("data-qa", "vacancy-serp__vacancy-address").text());
-                    vacancy.setCompanyName(element.getElementsByAttributeValue("data-qa", "vacancy-serp__vacancy-employer").text());
-                    vacancy.setUrl(element.getElementsByAttributeValue("data-qa", "vacancy-serp__vacancy-title").attr("href"));
-                    vacancy.setSalary(element.getElementsByAttributeValue("data-qa", "vacancy-serp__vacancy-compensation").text());
+                    vacancy.setTitle(element.getElementsByClass("title").text());
+                    vacancy.setCompanyName(element.getElementsByAttributeValue("class", "company_name").select("a[href]").text());
+                    String city =""; // это прикол
+                    if (element.getElementsByClass("location").text() != null)
+                        city = element.getElementsByClass("location").text();
+                    vacancy.setCity(city);
+                    vacancy.setUrl("https://moikrug.ru" + element.getElementsByTag("a").attr("href"));
+                    vacancy.setSalary(element.getElementsByClass("count").text());
                     vacancyList.add(vacancy);
                 }
             }
-        }catch (IOException ex) {}
+        }catch (IOException ex) {ex.printStackTrace();}
 
         return vacancyList;
     }
