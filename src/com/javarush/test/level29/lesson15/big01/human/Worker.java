@@ -3,7 +3,7 @@ package com.javarush.test.level29.lesson15.big01.human;
 public class Worker extends Human{
 
     private double salary;
-    public String company;
+    private String company;
 
     public Worker(String name, int age)
     {
