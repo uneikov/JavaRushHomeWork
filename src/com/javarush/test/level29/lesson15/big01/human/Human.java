@@ -72,14 +72,6 @@ public class Human {
 
     }
 
-    //public void live() {
-     //   if (isSoldier)
-    //        fight();
-    //}
-
-    //public void fight() {
-    //}
-
     public int getId() {
         return id;
     }
