@@ -2,7 +2,7 @@ package com.javarush.test.level29.lesson15.big01.car;
 
 import java.util.Date;
 
-public class Car {
+public abstract class Car {
     static public final int TRUCK = 0;
     static public final int SEDAN = 1;
     static public final int CABRIOLET = 2;
@@ -61,13 +61,13 @@ public class Car {
         return consumption;
     }
 
-    public int getNumberOfPassengersCanBeTransferred() {
-        if (!isDriverAvailable())
-            return 0;
-        if (fuel <= 0)
-            return 0;
+    private boolean canPassengersBeTransferred(){
+        return (isDriverAvailable() && fuel > 0);
+    }
 
-        return numberOfPassengers;
+    public int getNumberOfPassengersCanBeTransferred() {
+        if (canPassengersBeTransferred()) return numberOfPassengers;
+        else return 0;
     }
 
     public boolean isDriverAvailable() {
@@ -81,10 +81,8 @@ public class Car {
     public void startMoving() {
         if (numberOfPassengers > 0) {
             fastenPassengersBelts();
-            fastenDriverBelt();
-        } else {
-            fastenDriverBelt();
         }
+        fastenDriverBelt();
     }
 
     public void fastenPassengersBelts() {
@@ -93,11 +91,6 @@ public class Car {
     public void fastenDriverBelt() {
     }
 
-    public int getMaxSpeed() {
-        if (type == TRUCK)
-            return 80;
-        if (type == SEDAN)
-            return 120;
-        return 90;
-    }
+    public abstract int getMaxSpeed();
+
 }
