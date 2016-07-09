@@ -1,11 +1,10 @@
 package com.javarush.test.level27.lesson06.task02;
 
-import com.sun.xml.internal.bind.v2.util.ByteArrayOutputStreamEx;
+import com.javarush.test.level27.lesson04.home01.ThreadDeadlock;
+import com.sun.xml.internal.ws.api.server.ThreadLocalContainerResolver;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /* Определяем порядок захвата монитора. Сложная.
 Реализуйте логику метода isNormalLockOrder, который должен определять:
@@ -26,44 +25,24 @@ public class Solution {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException ignored) {
-                ignored.printStackTrace();
             }
 
             synchronized (secondLock) {
-                System.out.println(obj1 + " " + obj2);
+                //System.out.println(obj1 + " " + obj2);
             }
         }
     }
 
     public static boolean isNormalLockOrder(final Solution solution, final Object o1, final Object o2) throws Exception {
-        boolean result;
-        /*
+
+        synchronized (o1) {
+        }
+        System.out.println(o1.hashCode() > o2.hashCode() ? "o1 > o2 " : "o1 < o2 ");
         solution.someMethodWithSynchronizedBlocks(o1, o2);
+        System.out.println(Thread.currentThread().getName());
 
-        Method[] methods = solution.getClass().getDeclaredMethods();
-        Class[] types = methods[0].getParameterTypes();
-        System.out.println(o1.toString() + " ---- " + o2.toString());
-        Parameter[] parameters = solution.getClass().getDeclaredMethods()[0].getParameters();
-        System.out.println(methods[0].getName() + " - " + parameters[0].getClass() + " - " + parameters[1].getClass());
-        if (parameters[0].hashCode() == o1.hashCode() && parameters[1].hashCode() == o2.hashCode()) result = true;
-        else result = false;
-        System.out.println(result);
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(baos);
-        PrintStream old = System.out;
-
-        System.setOut(ps);
-        */
-        solution.someMethodWithSynchronizedBlocks(o1, o2);
-        //System.out.flush();
-
-
-        //System.setOut(old);
-
-        //System.out.println("Here: " + baos.toString());
-
-        return true;
+        //do something here
+        return false;
     }
 
     public static void main(String[] args) throws Exception {
@@ -90,6 +69,5 @@ public class Solution {
                 }
             }
         }.start();
-
     }
 }
