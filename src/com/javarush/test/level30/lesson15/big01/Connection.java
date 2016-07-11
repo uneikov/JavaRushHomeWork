@@ -22,27 +22,17 @@ public class Connection implements Closeable{
     }
 
     public void send(Message message) throws IOException{
-
-
-
-        /*
-        Он должен записывать
-(сериализовать) сообщение message в ObjectOutputStream. Этот метод будет
-вызываться из нескольких потоков. Позаботься, чтобы запись в объект
-ObjectOutputStream была возможна только одним потоком в определенный момент
-времени, остальные желающие ждали завершения записи. При этом другие методы
-класса Connection не должны быть заблокированы.
-         */
+        synchronized (out){
+            out.writeObject(message);
+        }
     }
 
     public Message receive() throws IOException, ClassNotFoundException{
-        /*
-        Он должен читать
-(десериализовать) данные из ObjectInputStream. Сделай так, чтобы операция чтения
-не могла быть одновременно вызвана несколькими потоками, при этом вызов других
-методы класса Connection не блокировать.
-         */
-        return null;
+        Message message;
+        synchronized (in){
+            message = (Message) in.readObject();
+        }
+        return message;
     }
 
     public SocketAddress getRemoteSocketAddress(){
