@@ -12,11 +12,20 @@ import java.util.Stack;
 */
 public class Solution {
     public static void main(String[] args) {
-        Number number = new Number(NumerationSystemType._10, "1126697201");
+        Number number = new Number(NumerationSystemType._9, "-1126657201");
         Number result = convertNumberToOtherNumerationSystem(number, NumerationSystemType._16);
         System.out.println(result);    //expected 110
     }
 
+    public static Number convertNumberToOtherNumerationSystem(Number number, NumerationSystem expectedNumerationSystem) {
+
+        BigInteger bigInteger = new BigInteger(number.getDigit(), number.getNumerationSystem().getNumerationSystemIntValue());
+
+        String str = bigInteger.toString(expectedNumerationSystem.getNumerationSystemIntValue());
+
+        return new Number(expectedNumerationSystem, str);
+    }
+/*
     public static Number convertNumberToOtherNumerationSystem(Number number, NumerationSystem expectedNumerationSystem) {
 
         Stack<String> stack = new Stack<>();
@@ -59,5 +68,5 @@ public class Solution {
         decimalSystemValueAsAString = Integer.toString(Integer.parseInt(num, base));
         return decimalSystemValueAsAString;
     }
-
+*/
 }
