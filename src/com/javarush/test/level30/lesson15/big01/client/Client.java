@@ -6,6 +6,7 @@ import com.javarush.test.level30.lesson15.big01.Message;
 import com.javarush.test.level30.lesson15.big01.MessageType;
 
 import java.io.IOException;
+import java.net.Socket;
 
 /**
  * Created by URAN on 12.07.2016.
@@ -16,6 +17,17 @@ public class Client {
     volatile private boolean clientConnected = false;
 
     public class SocketThread extends Thread {
+
+        public void run(){
+            try {
+                Socket socket = new Socket(getServerAddress(), getServerPort());
+                Client.this.connection = new Connection(socket);
+                clientHandshake();
+                clientMainLoop();
+            }catch (IOException | ClassNotFoundException ex){
+                notifyConnectionStatusChanged(false);
+            }
+        }
 
         protected void clientHandshake() throws IOException, ClassNotFoundException{
             Message message;
