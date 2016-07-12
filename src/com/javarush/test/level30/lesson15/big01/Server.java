@@ -51,6 +51,23 @@ public class Server {
                 }
             }
         }
+
+        private void serverMainLoop(Connection connection, String userName) throws IOException, ClassNotFoundException {
+
+            Message message;
+            String text;
+
+            while (true){
+                message = connection.receive();
+                if (message.getType().equals(MessageType.TEXT)){
+                    text = userName + ": " + message.getData();
+                    sendBroadcastMessage(new Message(MessageType.TEXT, text));
+                }
+                else {
+                    System.out.println("Ошибка. Неверный тип сообщения");
+                }
+            }
+        }
     }
 
     public static void sendBroadcastMessage(Message message){
