@@ -19,6 +19,33 @@ public class Client {
 
     }
 
+    public void run(){
+        String in;
+        SocketThread socketThread = getSocketThread();
+        socketThread.setDaemon(true);
+        socketThread.start();
+
+        try {
+            synchronized (this) {
+                this.wait();
+            }
+        } catch (InterruptedException ex) {
+            ConsoleHelper.writeMessage("Соединение прервано");
+            return;
+        }
+
+        if (clientConnected)
+            ConsoleHelper.writeMessage("Соединение установлено. Для выхода наберите команду 'exit'.");
+        else
+            ConsoleHelper.writeMessage("Произошла ошибка во время работы клиента.");
+
+        while (clientConnected){
+            in = ConsoleHelper.readString();
+            if (in.equals("exit".toLowerCase())) break;
+            else if (shouldSentTextFromConsole()) sendTextMessage(in);
+        }
+    }
+
     protected String getServerAddress(){
         ConsoleHelper.writeMessage("Введите адрес сервера:");
         return ConsoleHelper.readString();
@@ -49,5 +76,9 @@ public class Client {
             System.out.println("Ошибка соединения. Сообщение отослать не удалось");
             clientConnected = false;
         }
+    }
+
+    public static void main(String[] args) {
+        new Client().run();
     }
 }
