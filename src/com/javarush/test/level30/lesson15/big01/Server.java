@@ -21,6 +21,40 @@ public class Server {
             this.socket = socket;
         }
 
+        public void run(){
+
+            String userName = "";
+            Connection connection = null;
+
+            ConsoleHelper.writeMessage("Установлено новое соединение с удаленным адресом" +
+                    socket.getRemoteSocketAddress());
+
+            try {
+                connection = new Connection(socket);
+                userName = serverHandshake(connection);
+                sendBroadcastMessage(new Message(MessageType.USER_ADDED, userName));
+                sendListOfUsers(connection, userName);
+                serverMainLoop(connection, userName);
+
+            } catch (IOException | ClassNotFoundException ex){
+                System.out.println("Произошла ошибка при обмене данными с удаленным адресом");
+            }
+
+            if (!userName.isEmpty()) {
+                connectionMap.remove(userName);
+                sendBroadcastMessage(new Message(MessageType.USER_REMOVED, userName));
+            }
+
+            try {
+                connection.close();
+            } catch (Exception exx) {
+                exx.printStackTrace();
+            }
+
+            System.out.println("Cоединение с удаленным адресом закрыто");
+
+        }
+
         private String serverHandshake(Connection connection) throws IOException, ClassNotFoundException{
 
             Message message;
