@@ -43,6 +43,14 @@ public class Server {
 
             return userName;
         }
+
+        private void sendListOfUsers(Connection connection, String userName) throws IOException {
+            for (Map.Entry<String, Connection> connectionEntry : connectionMap.entrySet()){
+                if (!connectionEntry.getKey().equals(userName)) {
+                    connection.send(new Message(MessageType.USER_ADDED, connectionEntry.getKey()));
+                }
+            }
+        }
     }
 
     public static void sendBroadcastMessage(Message message){
