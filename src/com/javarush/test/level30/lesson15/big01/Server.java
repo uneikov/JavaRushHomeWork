@@ -19,14 +19,27 @@ public class Server {
     }
 
     public static void main(String[] args) {
-        ServerSocket serverSocket;
-        int port = ConsoleHelper.readInt();
-        try {
-            serverSocket = new ServerSocket(port);
-        }catch (IOException ex) {}
-        ConsoleHelper.writeMessage("Сервер запущен");
-        while (true){
 
+        ServerSocket serverSocket = null;
+        Socket socket = null;
+
+        int serverPort = ConsoleHelper.readInt();
+
+        try {
+            serverSocket = new ServerSocket(serverPort);
+            ConsoleHelper.writeMessage("Сервер запущен");
+            while (true){
+                socket = serverSocket.accept();
+                new Handler(socket).start();
+            }
+        }catch (IOException ex) {
+            System.out.println("Ошибка сокета");
+            try {
+                serverSocket.close();
+            } catch (Exception exx) {
+                System.out.println("Ошибка сокета");
+                exx.printStackTrace();
+            }
         }
     }
 }
