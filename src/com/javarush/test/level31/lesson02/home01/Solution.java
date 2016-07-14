@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -28,14 +27,12 @@ public class Solution {
 
     public static void main(String[] args) {
 
-        //String path = args[0]; // путь к директории
-        String path = "C:/Users/Uran/Desktop/FileTest/";
-        //String resultFileAbsolutePath = args[1]; // файл куда пишем результат
-        String resultFileAbsolutePath = "C:/Users/Uran/Desktop/resultFileAbsolutePath.txt";
-        File result = new File(resultFileAbsolutePath);
-
+        String path = args[0];
+        String resultFileAbsolutePath = args[1];
         FileWriter fileWriter = null;
+
         File folder = new File(path);
+        File outputFile = new File(resultFileAbsolutePath);
 
         processFiles(folder);
         deleteEmptyDirectories(folder);
@@ -47,7 +44,7 @@ public class Solution {
             ex.printStackTrace();
         }
 
-        result.renameTo(new File(resultFileAbsolutePath.replace(result.getName(),"allFilesContent.txt")));
+        outputFile.renameTo(new File(resultFileAbsolutePath.replace(outputFile.getName(),"allFilesContent.txt")));
 
         for (File file : fileList) {
             try (FileReader fileReader = new FileReader(file)) {
