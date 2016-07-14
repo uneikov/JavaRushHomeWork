@@ -29,6 +29,7 @@ public class Solution {
         }
     }
 */
+    // ОБХОД ДЕРЕВА В ШИРИНУ (ИСПОЛЬЗУЕТСЯ ОЧЕРЕДЬ). МОЖНО НАВЕРНОЕ И СТЕК В ДАННОМ СЛУЧАЕ
     public static List<String> getFileTree(String root) throws IOException{
         Queue<File> queue = new ArrayDeque<>();
         List<String> files = new ArrayList<>();
