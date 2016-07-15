@@ -30,61 +30,59 @@ b.txt
 */
 
 public class Solution {
+
     public static void main(String[] args) throws IOException {
 
         Map<String, ByteArrayOutputStream> fileMap;
+        //String addToZipFileName = args[0];
+        //String zipFileName = args[1];
         String zipFileName = "C:/Users/URAN/Desktop/FileTest/wr.zip";
         String addToZipFileName = "C:/Users/URAN/Desktop/FileTest/alaniaheits.txt";
 
-        fileMap = inflateOldZipContentToMap(zipFileName);
+        fileMap = inflateOldZipContentToMap(zipFileName, addToZipFileName);
         addNewContentToMap(addToZipFileName, fileMap);
         writeNewZipContent(zipFileName, fileMap);
 
     }
 
-    public static Map<String, ByteArrayOutputStream> inflateOldZipContentToMap(String zipFileName) throws IOException{
+    public static Map<String, ByteArrayOutputStream> inflateOldZipContentToMap(String zipFileName, String addToZipFileName)
+            throws IOException{
+
         ZipEntry zipEntry;
-        int inline;
-        FileInputStream zipInFile = new FileInputStream(zipFileName);
-        ZipInputStream  zipIn = new ZipInputStream(zipInFile);
+        ZipFile zipFile = new ZipFile( zipFileName );
+        FileInputStream fis = new FileInputStream(zipFileName);
+        ZipInputStream  zis = new ZipInputStream(fis);
         ByteArrayOutputStream baos;
-        BufferedReader reader;
         Map<String, ByteArrayOutputStream> fileMap = new HashMap<>();
 
-        ZipFile zipFile = new ZipFile( zipFileName );
-
-        while ((zipEntry = zipIn.getNextEntry()) != null){
-
-            InputStream in = zipFile.getInputStream(zipEntry);
-            baos = new ByteArrayOutputStream();
-            reader = new BufferedReader(new InputStreamReader(in));
-
-            while ((inline = reader.read()) != -1) {
-                baos.write(inline);
+        while ((zipEntry = zis.getNextEntry()) != null){
+            if (!zipEntry.getName().equals(new File(addToZipFileName).getName())){
+                InputStream in = zipFile.getInputStream(zipEntry);
+                BufferedInputStream bis = new BufferedInputStream(in);
+                baos = new ByteArrayOutputStream();
+                while (bis.available() != 0) baos.write(bis.read());
+                fileMap.put(zipEntry.getName(), baos);
             }
-
-            fileMap.put(zipEntry.getName(), baos);
-
         }
 
         return fileMap;
     }
 
 
-    public static   Map<String, ByteArrayOutputStream> addNewContentToMap(String addToZipFileName, Map<String, ByteArrayOutputStream> fileMap)
-    throws IOException{
-        int inline;
+    public static  void addNewContentToMap(String addToZipFileName, Map<String, ByteArrayOutputStream> fileMap) throws IOException{
+
         File file = new File(addToZipFileName);
-        BufferedReader reader = new BufferedReader(new FileReader(file));
+        BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        while ((inline = reader.read()) != -1) {
-            baos.write(inline);
-        }
+
+        while (bis.available() != 0) baos.write(bis.read());
 
         fileMap.put("new/alaniaheits.txt", baos);
+
+        bis.close();
         baos.close();
 
-        return fileMap;
+        //return fileMap;
     }
 
     public static void writeNewZipContent(String zipFileName, Map<String, ByteArrayOutputStream> fileMap)throws IOException{
