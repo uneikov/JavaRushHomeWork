@@ -26,9 +26,9 @@ public class Solution {
 
         String resultFileName = "C:/Users/URAN/Desktop/FileTest/BTO.txt";
         String multiPartZipDir  = "C:/MultipartZipArchive/";
-        String[] multi  = { "C:\\MultipartZipArchive\\R.zip.001","C:\\MultipartZipArchive\\R.zip.002",
-                            "C:/MultipartZipArchive/R.zip.003", "C:/MultipartZipArchive/R.zip.004",
-                            "C:/MultipartZipArchive/R.zip.005", "C:/MultipartZipArchive/R.zip.006" };
+        String[] multi  = { "C:/MultipartZipArchive/Documents.zip.001","C:/MultipartZipArchive/Documents.zip.002",
+                            "C:/MultipartZipArchive/Documents.zip.003", "C:/MultipartZipArchive/Documents.zip.004",
+                            "C:/MultipartZipArchive/Documents.zip.005", "C:/MultipartZipArchive/Documents.zip.006" };
         //String[] multi = {"C:/MultipartZipArchive/OOO/R.zip.001","C:/MultipartZipArchive/OOO/R.zip.002"};
         try (FileOutputStream fos = new FileOutputStream(resultFileName, true) ){
 
