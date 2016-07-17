@@ -3,6 +3,8 @@ package com.javarush.test.level31.lesson06.bonus01;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
@@ -24,20 +26,35 @@ C:/pathToTest/test.zip.002
 public class Solution {
     public static void main(String[] args) {
 
-        String resultFileName = "C:/Users/URAN/Desktop/FileTest/BTO.txt";
+        String resultFileName = "C:/Users/URAN/Desktop/FileTest/LZ.mp3";
         String multiPartZipDir  = "C:/MultipartZipArchive/";
-        String[] multi  = { "C:/MultipartZipArchive/Documents.zip.001","C:/MultipartZipArchive/Documents.zip.002",
-                            "C:/MultipartZipArchive/Documents.zip.003", "C:/MultipartZipArchive/Documents.zip.004",
-                            "C:/MultipartZipArchive/Documents.zip.005", "C:/MultipartZipArchive/Documents.zip.006" };
+        String[] multi  = { "C:/MultipartZipArchive/Since I've Been Loving You.zip.001", "C:/MultipartZipArchive/Since I've Been Loving You.zip.002",
+                            "C:/MultipartZipArchive/Since I've Been Loving You.zip.003", "C:/MultipartZipArchive/Since I've Been Loving You.zip.004",
+                            "C:/MultipartZipArchive/Since I've Been Loving You.zip.005", "C:/MultipartZipArchive/Since I've Been Loving You.zip.006" };
         //String[] multi = {"C:/MultipartZipArchive/OOO/R.zip.001","C:/MultipartZipArchive/OOO/R.zip.002"};
-        try (FileOutputStream fos = new FileOutputStream(resultFileName, true) ){
-
+        Path tempFilePath = null;
+        try {
+            tempFilePath = Files.createTempFile("temp", ".zip");
+            FileOutputStream fos = new FileOutputStream(tempFilePath.toFile(), true);
             for (int i = 0; i < multi.length; i++) {
-                File file = new File(multi[i]);
+                try(FileInputStream fis = new FileInputStream(multi[i]);
+                BufferedInputStream bis = new BufferedInputStream(fis)){
+                    byte[] buffer = new byte[bis.available()];
+                    bis.read(buffer);
+                    fos.write(buffer);
+                    fos.flush();
+                }
+            }
+        }catch (IOException ex) {ex.printStackTrace();}
+
+        try (FileOutputStream fos = new FileOutputStream(resultFileName) ){
+
+                File file = tempFilePath.toFile();
                 ZipFile zipFile = new ZipFile(file);
                 try(
-                        FileInputStream fis = new FileInputStream(file);
-                        ZipInputStream zis = new ZipInputStream(fis);
+                        InputStream inn = Files.newInputStream(tempFilePath, StandardOpenOption.READ);
+                        //FileInputStream fis = new FileInputStream(file);
+                        ZipInputStream zis = new ZipInputStream(inn);
                         InputStream in = zipFile.getInputStream(zis.getNextEntry());
                         BufferedInputStream bis = new BufferedInputStream(in)
                 ) {
@@ -48,13 +65,9 @@ public class Solution {
                     fos.flush();
 
                 }catch (IOException ex) {ex.printStackTrace();}
-            }
+
 
         }catch (IOException exx) {exx.printStackTrace();}
-
-
-
-
 
     }
 }
