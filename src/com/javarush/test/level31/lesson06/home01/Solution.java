@@ -27,76 +27,82 @@ b.txt
 Подсказка: нужно сначала куда-то сохранить содержимое всех энтри,
 а потом записать в архив все энтри вместе с добавленным файлом.
 Пользоваться файловой системой нельзя.
+
+СОГЛАСНО ИНФОРМАЦИИ ИЗ ОБСУЖДЕНИЙ ФАЙЛ ДОБАВЛЯЕТСЯ В АРХИВ ЕСЛИ ОН УЖЕ ТАМ ЕСТЬ!!!
+(Т.Е. СТАРЫЙ ЗАТИРАЕТСЯ, А НОВЫЙ ПИШЕТСЯ В ПАПКУ new/ )
 */
 
 public class Solution {
 
+    public static Map<ZipEntry, ByteArrayOutputStream> fileMap = new HashMap<>();
+
     public static void main(String[] args) throws IOException {
 
-        Map<String, ByteArrayOutputStream> fileMap;
-        //String addToZipFileName = args[0];
-        //String zipFileName = args[1];
-        String zipFileName = "C:/Users/URAN/Desktop/FileTest/wr.zip";
-        String addToZipFileName = "C:/Users/URAN/Desktop/FileTest/alaniaheits.txt";
+        File addToZipFile = new File(args[0]);
+        File zipFile = new File(args[1]);
 
-        fileMap = inflateOldZipContentToMap(zipFileName, addToZipFileName);
-        addNewContentToMap(addToZipFileName, fileMap);
-        writeNewZipContent(zipFileName, fileMap);
+        if (!inflateOldZipContentToMap(zipFile, addToZipFile)) System.exit(0);
+        addNewContentToMap(addToZipFile);
+        writeNewZipContent(zipFile);
 
     }
 
-    public static Map<String, ByteArrayOutputStream> inflateOldZipContentToMap(String zipFileName, String addToZipFileName)
+    public static boolean inflateOldZipContentToMap(File zippedFile, File addToZipFile)
             throws IOException{
 
         ZipEntry zipEntry;
-        ZipFile zipFile = new ZipFile( zipFileName );
-        FileInputStream fis = new FileInputStream(zipFileName);
-        ZipInputStream  zis = new ZipInputStream(fis);
-        ByteArrayOutputStream baos;
-        Map<String, ByteArrayOutputStream> fileMap = new HashMap<>();
+        String added = addToZipFile.getName();
+        ZipFile zipFile = new ZipFile( zippedFile );
+        boolean isFileExistInZipArchive = false;
 
-        while ((zipEntry = zis.getNextEntry()) != null){
-            if (!zipEntry.getName().equals(new File(addToZipFileName).getName())){
-                InputStream in = zipFile.getInputStream(zipEntry);
-                BufferedInputStream bis = new BufferedInputStream(in);
-                baos = new ByteArrayOutputStream();
-                while (bis.available() != 0) baos.write(bis.read());
-                fileMap.put(zipEntry.getName(), baos);
+        try (FileInputStream fis = new FileInputStream( zippedFile );
+             ZipInputStream  zis = new ZipInputStream( fis )) {
+
+            while ((zipEntry = zis.getNextEntry()) != null) {
+
+                if (!zipEntry.getName().equals(added)) {
+                    try(InputStream in = zipFile.getInputStream(zipEntry);
+                        BufferedInputStream bis = new BufferedInputStream(in);
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+
+                        byte[] buffer = new byte[bis.available()];
+                        bis.read(buffer);
+                        baos.write(buffer);
+
+                        fileMap.put(zipEntry, baos);
+                    }
+                } else {
+                    isFileExistInZipArchive = true;
+                }
             }
         }
 
-        return fileMap;
+        return isFileExistInZipArchive;
     }
 
 
-    public static  void addNewContentToMap(String addToZipFileName, Map<String, ByteArrayOutputStream> fileMap) throws IOException{
+    public static void addNewContentToMap(File addToZipFile) throws IOException{
 
-        File file = new File(addToZipFileName);
-        BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(addToZipFile));
+             ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
 
-        while (bis.available() != 0) baos.write(bis.read());
+            byte[] buffer = new byte[bis.available()];
+            bis.read(buffer);
+            baos.write(buffer);
 
-        fileMap.put("new/alaniaheits.txt", baos);
-
-        bis.close();
-        baos.close();
-
-        //return fileMap;
-    }
-
-    public static void writeNewZipContent(String zipFileName, Map<String, ByteArrayOutputStream> fileMap)throws IOException{
-
-        FileOutputStream zipOutFile = new FileOutputStream(zipFileName);
-        ZipOutputStream zipOut = new ZipOutputStream(zipOutFile);
-        zipOut.setLevel(Deflater.DEFAULT_COMPRESSION);
-
-        for (Map.Entry<String, ByteArrayOutputStream> map: fileMap.entrySet()){
-            String fileName = map.getKey();
-            zipOut.putNextEntry(new ZipEntry(fileName));
-            map.getValue().writeTo(zipOut);
+            fileMap.put(new ZipEntry("new/".concat(addToZipFile.getName())), baos);
         }
+    }
 
-        zipOut.close();
+    public static void writeNewZipContent(File zipFile)throws IOException{
+
+        try (FileOutputStream fos = new FileOutputStream(zipFile); ZipOutputStream zos = new ZipOutputStream(fos)) {
+
+            for (Map.Entry<ZipEntry, ByteArrayOutputStream> map : fileMap.entrySet()) {
+                zos.putNextEntry(map.getKey());
+                zos.write(map.getValue().toByteArray());
+                zos.closeEntry();
+            }
+        }
     }
 }
