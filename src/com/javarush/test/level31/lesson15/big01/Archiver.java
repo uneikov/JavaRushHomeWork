@@ -15,11 +15,13 @@ public class Archiver {
 
         try (BufferedReader r = new BufferedReader(new InputStreamReader(System.in))){
 
-            System.out.println("Input full path to file for result archive:");
-            fileName = r.readLine();
+            //System.out.println("Input full path to file for result archive:");
+            //fileName = r.readLine();
+            fileName = "C:/Users/URAN/Desktop/FileTest/LLZ.zip";
             ZipFileManager manager = new ZipFileManager(Paths.get(fileName));
-            System.out.println("Input full path to file you want to be archived:");
-            fileName  = r.readLine();
+            //System.out.println("Input full path to file you want to be archived:");
+            //fileName  = r.readLine();
+            fileName = "C:/Users/URAN/Desktop/FileTest/LZ.mp3";
             manager.createZip(Paths.get(fileName));
 
         }catch (Exception ex) {
