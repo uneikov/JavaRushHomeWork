@@ -1,6 +1,5 @@
 package com.javarush.test.level31.lesson08.home01;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,8 +13,8 @@ public class Solution {
     private FileData fileData;
 
     public Solution(String pathToFile) {
-        Path path = Paths.get(pathToFile);
         try {
+            Path path = Paths.get(pathToFile); // внитри try/catch
             boolean hidden = Files.isHidden(path);
             boolean executable = Files.isExecutable(path);
             boolean directory = Files.isDirectory(path);
@@ -26,7 +25,7 @@ public class Solution {
                     directory,
                     writable
             );
-        }catch (IOException ex) {
+        }catch (Exception ex) {
             this.fileData = new NullFileData(ex);
         }
     }
@@ -34,4 +33,5 @@ public class Solution {
     public FileData getFileData() {
         return fileData;
     }
+
 }
