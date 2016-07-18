@@ -27,46 +27,46 @@ public class Solution {
     public static void main(String[] args) {
 
         String resultFileName = "C:/Users/URAN/Desktop/FileTest/LZ.mp3";
-        String multiPartZipDir  = "C:/MultipartZipArchive/";
+
         String[] multi  = { "C:/MultipartZipArchive/Since I've Been Loving You.zip.001", "C:/MultipartZipArchive/Since I've Been Loving You.zip.002",
                             "C:/MultipartZipArchive/Since I've Been Loving You.zip.003", "C:/MultipartZipArchive/Since I've Been Loving You.zip.004",
                             "C:/MultipartZipArchive/Since I've Been Loving You.zip.005", "C:/MultipartZipArchive/Since I've Been Loving You.zip.006" };
-        //String[] multi = {"C:/MultipartZipArchive/OOO/R.zip.001","C:/MultipartZipArchive/OOO/R.zip.002"};
+
         Path tempFilePath = null;
         try {
             tempFilePath = Files.createTempFile("temp", ".zip");
-            FileOutputStream fos = new FileOutputStream(tempFilePath.toFile(), true);
+            OutputStream fos = Files.newOutputStream(tempFilePath, StandardOpenOption.APPEND);
+            //FileOutputStream fos = new FileOutputStream(tempFilePath.toFile(), true);
             for (int i = 0; i < multi.length; i++) {
                 try(FileInputStream fis = new FileInputStream(multi[i]);
                 BufferedInputStream bis = new BufferedInputStream(fis)){
                     byte[] buffer = new byte[bis.available()];
                     bis.read(buffer);
                     fos.write(buffer);
-                    fos.flush();
                 }
+                fos.flush();
             }
         }catch (IOException ex) {ex.printStackTrace();}
 
         try (FileOutputStream fos = new FileOutputStream(resultFileName) ){
 
-                File file = tempFilePath.toFile();
-                ZipFile zipFile = new ZipFile(file);
-                try(
-                        InputStream inn = Files.newInputStream(tempFilePath, StandardOpenOption.READ);
-                        //FileInputStream fis = new FileInputStream(file);
-                        ZipInputStream zis = new ZipInputStream(inn);
-                        InputStream in = zipFile.getInputStream(zis.getNextEntry());
-                        BufferedInputStream bis = new BufferedInputStream(in)
-                ) {
+            File file = tempFilePath.toFile();
+            ZipFile zipFile = new ZipFile(file);
+            try(
+                    InputStream inn = Files.newInputStream(tempFilePath, StandardOpenOption.READ);
+                    //FileInputStream fis = new FileInputStream(file);
+                    ZipInputStream zis = new ZipInputStream(inn);
+                    InputStream in = zipFile.getInputStream(zis.getNextEntry());
+                    BufferedInputStream bis = new BufferedInputStream(in)
+            ) {
 
-                    byte[] buffer = new byte[in.available()];
-                    bis.read(buffer);
-                    fos.write(buffer);
-                    fos.flush();
+                byte[] buffer = new byte[in.available()];
+                bis.read(buffer);
+                fos.write(buffer);
+                fos.flush();
+            }catch (IOException ex) {ex.printStackTrace();}
 
-                }catch (IOException ex) {ex.printStackTrace();}
-
-
+            file.delete();
         }catch (IOException exx) {exx.printStackTrace();}
 
     }
