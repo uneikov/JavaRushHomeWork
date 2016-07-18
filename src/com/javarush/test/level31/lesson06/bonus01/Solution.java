@@ -1,6 +1,5 @@
 package com.javarush.test.level31.lesson06.bonus01;
 
-import com.sun.corba.se.impl.orbutil.concurrent.Sync;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -31,9 +30,24 @@ C:/pathToTest/test.zip.002
 public class Solution {
     public static void main(String[] args) {
 
+        // части файла перепутаны, поэтому исправляем сортировкой...
+        /*
         String resultFileName = args[0];
         List<String> partsList = Arrays.asList(Arrays.copyOfRange(args, 1, args.length));
         Collections.sort(partsList);
+        */
+
+        // ------------------------------------- это отладка !!! ------------------------------------------------
+        String resultFileName = "C:/Users/URAN/Desktop/FileTest/LZ.mp3";
+
+        String[] parts  = {
+                "C:/MultipartZipArchive/Since I've Been Loving You.zip.006", "C:/MultipartZipArchive/Since I've Been Loving You.zip.002",
+                "C:/MultipartZipArchive/Since I've Been Loving You.zip.003", "C:/MultipartZipArchive/Since I've Been Loving You.zip.004",
+                "C:/MultipartZipArchive/Since I've Been Loving You.zip.005", "C:/MultipartZipArchive/Since I've Been Loving You.zip.001"
+        };
+        List<String> partsList = Arrays.asList(Arrays.copyOfRange(parts, 0, parts.length));
+        Collections.sort(partsList);
+        //--------------------------------------------------------------------------------------------------------
 
         Path tempFilePath = null;
         try {
@@ -67,8 +81,7 @@ public class Solution {
                 fos.flush();
             }catch (IOException ex) {ex.printStackTrace();}
 
-            file.delete();
-        }catch (IOException exx) {exx.printStackTrace();}
 
+        }catch (IOException exx) {exx.printStackTrace();}
     }
 }
