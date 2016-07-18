@@ -1,10 +1,15 @@
 package com.javarush.test.level31.lesson06.bonus01;
 
+import com.sun.corba.se.impl.orbutil.concurrent.Sync;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
@@ -26,19 +31,16 @@ C:/pathToTest/test.zip.002
 public class Solution {
     public static void main(String[] args) {
 
-        String resultFileName = "C:/Users/URAN/Desktop/FileTest/LZ.mp3";
-
-        String[] multi  = { "C:/MultipartZipArchive/Since I've Been Loving You.zip.001", "C:/MultipartZipArchive/Since I've Been Loving You.zip.002",
-                            "C:/MultipartZipArchive/Since I've Been Loving You.zip.003", "C:/MultipartZipArchive/Since I've Been Loving You.zip.004",
-                            "C:/MultipartZipArchive/Since I've Been Loving You.zip.005", "C:/MultipartZipArchive/Since I've Been Loving You.zip.006" };
+        String resultFileName = args[0];
+        List<String> partsList = Arrays.asList(Arrays.copyOfRange(args, 1, args.length));
+        Collections.sort(partsList);
 
         Path tempFilePath = null;
         try {
             tempFilePath = Files.createTempFile("temp", ".zip");
             OutputStream fos = Files.newOutputStream(tempFilePath, StandardOpenOption.APPEND);
-            //FileOutputStream fos = new FileOutputStream(tempFilePath.toFile(), true);
-            for (int i = 0; i < multi.length; i++) {
-                try(FileInputStream fis = new FileInputStream(multi[i]);
+            for (String part : partsList) {
+                try(FileInputStream fis = new FileInputStream(part);
                 BufferedInputStream bis = new BufferedInputStream(fis)){
                     byte[] buffer = new byte[bis.available()];
                     bis.read(buffer);
@@ -54,7 +56,6 @@ public class Solution {
             ZipFile zipFile = new ZipFile(file);
             try(
                     InputStream inn = Files.newInputStream(tempFilePath, StandardOpenOption.READ);
-                    //FileInputStream fis = new FileInputStream(file);
                     ZipInputStream zis = new ZipInputStream(inn);
                     InputStream in = zipFile.getInputStream(zis.getNextEntry());
                     BufferedInputStream bis = new BufferedInputStream(in)
