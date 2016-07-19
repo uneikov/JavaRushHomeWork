@@ -3,9 +3,6 @@ package com.javarush.test.level31.lesson15.big01;
 import com.javarush.test.level31.lesson15.big01.exception.WrongZipFileException;
 
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
 
 
 /**
