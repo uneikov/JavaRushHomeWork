@@ -3,6 +3,9 @@ package com.javarush.test.level31.lesson15.big01;
 import com.javarush.test.level31.lesson15.big01.exception.WrongZipFileException;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 
 
 /**
@@ -17,10 +20,13 @@ public class Archiver {
         do {
             try {
                 operation = askOperation();
+                FileManager fm = new FileManager(Paths.get("C:/Users/URAN/Desktop/FileTest"));
+                List<Path> list = fm.getFileList();
                 CommandExecutor.execute(operation);
             } catch (WrongZipFileException e) {
                 ConsoleHelper.writeMessage("Вы не выбрали файл архива или выбрали неверный файл.");
             } catch (Exception e) {
+                e.printStackTrace();
                 ConsoleHelper.writeMessage("Произошла ошибка. Проверьте введенные данные.");
             }
 
