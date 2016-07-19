@@ -20,8 +20,6 @@ public class Archiver {
         do {
             try {
                 operation = askOperation();
-                FileManager fm = new FileManager(Paths.get("C:/Users/URAN/Desktop/FileTest"));
-                List<Path> list = fm.getFileList();
                 CommandExecutor.execute(operation);
             } catch (WrongZipFileException e) {
                 ConsoleHelper.writeMessage("Вы не выбрали файл архива или выбрали неверный файл.");

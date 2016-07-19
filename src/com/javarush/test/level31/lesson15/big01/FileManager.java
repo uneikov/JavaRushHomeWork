@@ -1,22 +1,19 @@
 package com.javarush.test.level31.lesson15.big01;
 
-
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by URAN on 19.07.2016.
- */
 public class FileManager {
-
     private Path rootPath;
     private List<Path> fileList;
 
-    public FileManager(Path rootPath) throws IOException{
+    public FileManager(Path rootPath) throws IOException {
         this.rootPath = rootPath;
+        this.fileList = new ArrayList<>();
         collectFileList(rootPath);
     }
 
@@ -24,27 +21,21 @@ public class FileManager {
         return fileList;
     }
 
-    private void collectFileList(Path path) throws IOException{
-        if (Files.isRegularFile(path)){
-            fileList.add(path.relativize(rootPath));
-            /*
-            Проверить, если переданный путь path является обычным файлом (используй метод
-            Files.isRegularFile), то получить его относительный путь относительно rootPath
-            и добавить его в список fileList.
-             */
-        }else {
-            if (Files.isDirectory(path)){
-                DirectoryStream<Path> directoryStream = Files.newDirectoryStream(path);
-                for (Path pathToDir: directoryStream){
-                    collectFileList(pathToDir);
+    private void collectFileList(Path path) throws IOException {
+        // Добавляем только файлы
+        if (Files.isRegularFile(path)) {
+            Path relativePath = rootPath.relativize(path);
+            fileList.add(relativePath);
+        }
+
+        // Добавляем содержимое директории
+        if (Files.isDirectory(path)) {
+            // Рекурсивно проходимся по всему содержмому директории
+            // Чтобы не писать код по вызову close для DirectoryStream, обернем вызов newDirectoryStream в try-with-resources
+            try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(path)) {
+                for (Path file : directoryStream) {
+                    collectFileList(file);
                 }
-                /*
-                Если переданный путь path, является директорией (узнать это поможет метод
-                Files.isDirectory), то пройтись по всему содержимому директории и вызвать
-                collectFileList(Path path), передав в path обнаруженные элементы.
-                Пройтись по всему содержимому директории можно предварительно получив DirectoryStream с помощью метода
-                newDirectoryStream класса Files. Не забудь закрыть созданный DirectoryStream.
-                 */
             }
         }
     }
