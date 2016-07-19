@@ -1,42 +1,53 @@
 package com.javarush.test.level31.lesson15.big01;
 
-import com.javarush.test.level31.lesson15.big01.command.ExitCommand;
+import com.javarush.test.level31.lesson15.big01.exception.WrongZipFileException;
 
-import java.nio.file.Paths;
+import java.io.IOException;
+
 
 /**
  * Created by URAN on 18.07.2016.
  */
 
 public class Archiver {
+
     public static void main(String[] args) {
 
-        String fileName;
-
-        while (true) {
-
-            ConsoleHelper.writeMessage("Input full path to file for result archive:");
-
-            fileName = ConsoleHelper.readString();
-            //fileName = "C:/Users/URAN/DEsktop/FileTest/lzlz.zip";
-            ZipFileManager manager = new ZipFileManager(Paths.get(fileName));
-
-            ConsoleHelper.writeMessage("Input full path to file you want to be archived:");
-
-            fileName = ConsoleHelper.readString();
-            //fileName = "C:/Users/URAN/Desktop/FileTest/LZ.mp3";
-
+        Operation operation = null;
+        do {
             try {
-                manager.createZip(Paths.get(fileName));
-                break;
-            }catch (Exception ex){
-                ex.printStackTrace();
-                ConsoleHelper.writeMessage("Invalid input. Try one`s more");
+                operation = askOperation();
+                CommandExecutor.execute(operation);
+            } catch (WrongZipFileException e) {
+                ConsoleHelper.writeMessage("Вы не выбрали файл архива или выбрали неверный файл.");
+            } catch (Exception e) {
+                ConsoleHelper.writeMessage("Произошла ошибка. Проверьте введенные данные.");
             }
-        }
 
-        try {
-            new ExitCommand().execute();
-        }catch (Exception ex) {}
+        } while (operation != Operation.EXIT);
+    }
+
+    public static Operation askOperation() throws IOException {
+         final String ASK_OPERATION =
+                "Выберите операцию:" +
+                        "\n%d - упаковать файлы в архив" +
+                        "\n%d - добавить файл в архив" +
+                        "\n%d - удалить файл из архива" +
+                        "\n%d - распаковать архив" +
+                        "\n%d - просмотреть содержимое архива" +
+                        "\n%d – выход";
+
+        String ask = String.format(ASK_OPERATION,
+                Operation.CREATE.ordinal(),
+                Operation.ADD.ordinal(),
+                Operation.REMOVE.ordinal(),
+                Operation.EXTRACT.ordinal(),
+                Operation.CONTENT.ordinal(),
+                Operation.EXIT.ordinal()
+        );
+        ConsoleHelper.writeMessage(ask);
+        int operationIndex = ConsoleHelper.readInt();
+
+        return Operation.values()[operationIndex];
     }
 }
