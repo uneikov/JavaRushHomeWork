@@ -1,7 +1,6 @@
 package com.javarush.test.level31.lesson15.big01;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.IOException;
 import java.nio.file.Paths;
 
 /**
@@ -13,19 +12,22 @@ public class Archiver {
 
         String fileName;
 
-        try (BufferedReader r = new BufferedReader(new InputStreamReader(System.in))){
+        while (true) {
 
-            //System.out.println("Input full path to file for result archive:");
-            //fileName = r.readLine();
-            fileName = "C:/Users/URAN/Desktop/FileTest/LLZ.zip";
+            ConsoleHelper.writeMessage("Input full path to file for result archive:");
+
+            fileName = ConsoleHelper.readString();
             ZipFileManager manager = new ZipFileManager(Paths.get(fileName));
-            //System.out.println("Input full path to file you want to be archived:");
-            //fileName  = r.readLine();
-            fileName = "C:/Users/URAN/Desktop/FileTest/LZ.mp3";
-            manager.createZip(Paths.get(fileName));
 
-        }catch (Exception ex) {
-            ex.printStackTrace();
+            ConsoleHelper.writeMessage("Input full path to file you want to be archived:");
+            fileName = ConsoleHelper.readString();
+
+            try {
+                manager.createZip(Paths.get(fileName));
+                break;
+            }catch (Exception ex){
+                ConsoleHelper.writeMessage("Invalid input. Try one`s more");
+            }
         }
     }
 }
