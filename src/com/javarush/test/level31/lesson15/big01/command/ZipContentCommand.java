@@ -1,19 +1,25 @@
 package com.javarush.test.level31.lesson15.big01.command;
 
+import com.javarush.test.level31.lesson15.big01.ConsoleHelper;
 import com.javarush.test.level31.lesson15.big01.FileProperties;
 import com.javarush.test.level31.lesson15.big01.ZipFileManager;
 
-import java.nio.file.Paths;
 import java.util.List;
 
-/**
- * Created by URAN on 19.07.2016.
- */
-public class ZipContentCommand extends ZipCommand{
+public class ZipContentCommand extends ZipCommand {
     @Override
     public void execute() throws Exception {
+        ConsoleHelper.writeMessage("Просмотр содержимого архива.");
 
-        //List<FileProperties> list = new ZipFileManager(Paths.get("C:/Users/URAN/DEsktop/ZZZ/zzz.zip")).getFilesList();
-        //for (FileProperties props : list) System.out.println(props.toString());
+        ZipFileManager zipFileManager = getZipFileManager();
+
+        ConsoleHelper.writeMessage("Содержимое архива:");
+
+        List<FileProperties> files = zipFileManager.getFilesList();
+        for (FileProperties file : files) {
+            ConsoleHelper.writeMessage(file.toString());
+        }
+
+        ConsoleHelper.writeMessage("Содержимое архива прочитано.");
     }
 }
