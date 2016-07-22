@@ -1,6 +1,8 @@
 package com.javarush.test.level31.lesson06.home01;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.zip.*;
 
@@ -8,7 +10,7 @@ import java.util.zip.*;
 В метод main приходит список аргументов.
 Первый аргумент - полный путь к файлу fileName.
 Второй аргумент - путь к zip-архиву.
-Добавить файл (fileName) внутрь архива в директорию 'new'.
+Добавить файл (fileName) внутрь архива в директорию 'new'. ???
 Если в архиве есть файл с таким именем, то заменить его.
 
 Пример входных данных:
@@ -34,73 +36,72 @@ b.txt
 
 public class Solution {
 
-    public static Map<ZipEntry, ByteArrayOutputStream> fileMap = new HashMap<>();
-
     public static void main(String[] args) throws IOException {
 
         File addToZipFile = new File(args[0]);
-        File zipFile = new File(args[1]);
+        File zipArchiveFile = new File(args[1]);
 
-        if (!inflateOldZipContentToMap(zipFile, addToZipFile)) System.exit(0);
-        addNewContentToMap(addToZipFile);
-        writeNewZipContent(zipFile);
-
+        processEverything(zipArchiveFile, addToZipFile);
     }
 
-    public static boolean inflateOldZipContentToMap(File zippedFile, File addToZipFile)
-            throws IOException{
+    public static void processEverything(File zippedFile, File addToZipFile) throws IOException{
 
-        ZipEntry zipEntry;
+        int length;
+        final int BUFFER = 2_048;
+        byte[] buffer = new byte[BUFFER];
+        boolean inZip = false;
+        Map<ZipEntry, byte[]> fileMap = new HashMap<>();
+        String zippedFileName;
         String added = addToZipFile.getName();
         ZipFile zipFile = new ZipFile( zippedFile );
-        boolean isFileExistInZipArchive = false;
 
-        try (FileInputStream fis = new FileInputStream( zippedFile );
-             ZipInputStream  zis = new ZipInputStream( fis )) {
+        Enumeration zipEntries = zipFile.entries();
+        while (zipEntries.hasMoreElements()) {
+            ZipEntry zipEntry = (ZipEntry) zipEntries.nextElement();
+            zippedFileName = Paths.get(zipEntry.getName()).getFileName().toString();
+            if (zippedFileName.equals(added)) {
+                  inZip = true;
+            }
+        }
+        if (!inZip) return;
 
-            while ((zipEntry = zis.getNextEntry()) != null) {
+        try (ZipInputStream  zis = new ZipInputStream(Files.newInputStream(zippedFile.toPath()))) {
 
-                if (!zipEntry.getName().equals(added)) {
-                    try(InputStream in = zipFile.getInputStream(zipEntry);
-                        BufferedInputStream bis = new BufferedInputStream(in);
+            ZipEntry zipEntry = zis.getNextEntry();
+            while (zipEntry != null) {
+
+                zippedFileName = Paths.get(zipEntry.getName()).getFileName().toString();
+
+                if (!zippedFileName.equals(added)) {
+                    try(BufferedInputStream bis = new BufferedInputStream(zipFile.getInputStream(zipEntry));
                         ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
 
-                        byte[] buffer = new byte[bis.available()];
-                        bis.read(buffer);
-                        baos.write(buffer);
+                        while ((length = bis.read(buffer,0, BUFFER)) > 0){
+                            baos.write(buffer, 0, length);
+                        }
 
-                        fileMap.put(zipEntry, baos);
+                        fileMap.put(zipEntry, baos.toByteArray());
                     }
                 } else {
-                    isFileExistInZipArchive = true;
+                    try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(addToZipFile));
+                         ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+
+                        while ((length = bis.read(buffer,0, BUFFER)) > 0){
+                            baos.write(buffer, 0, length);
+                        }
+
+                        fileMap.put(new ZipEntry(zipEntry.getName()), baos.toByteArray());
+                    }
                 }
+                zipEntry = zis.getNextEntry();
             }
         }
 
-        return isFileExistInZipArchive;
-    }
+        try (ZipOutputStream zos = new ZipOutputStream(Files.newOutputStream(zippedFile.toPath()))) {
 
-
-    public static void addNewContentToMap(File addToZipFile) throws IOException{
-
-        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(addToZipFile));
-             ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-
-            byte[] buffer = new byte[bis.available()];
-            bis.read(buffer);
-            baos.write(buffer);
-
-            fileMap.put(new ZipEntry("new/".concat(addToZipFile.getName())), baos);
-        }
-    }
-
-    public static void writeNewZipContent(File zipFile)throws IOException{
-
-        try (FileOutputStream fos = new FileOutputStream(zipFile); ZipOutputStream zos = new ZipOutputStream(fos)) {
-
-            for (Map.Entry<ZipEntry, ByteArrayOutputStream> map : fileMap.entrySet()) {
+            for (Map.Entry<ZipEntry, byte[]> map : fileMap.entrySet()) {
                 zos.putNextEntry(map.getKey());
-                zos.write(map.getValue().toByteArray());
+                zos.write(map.getValue());
                 zos.closeEntry();
             }
         }
