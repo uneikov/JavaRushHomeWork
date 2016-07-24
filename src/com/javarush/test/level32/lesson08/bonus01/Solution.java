@@ -33,25 +33,26 @@ public class Solution {
         System.out.format("%b %b %b\n", isItem, isBig, isSmall);
     }
 
-    public <T extends Item> Item getProxy(T returnClass, T... comlementClass){
+    public <T extends Class> Object getProxy(T returnClass, T... comlementClass){
 
-        Item result = null;
+        Object result = null;
 
-        Class<T>[] in = new Class[] {returnClass};
+        //Class<T>[] in = new Class[] {returnClass};
 
         if (comlementClass.length == 0){
-            result = (Item) Proxy.newProxyInstance(
-                    new Class[] {returnClass},
-                    //returnClass.getClass().getInterfaces(),
+            result = Proxy.newProxyInstance(
+                    returnClass.getClass().getClassLoader(),
+                    //new Class[] {returnClass},
+                    returnClass.getClass().getInterfaces(),
                     new ItemInvocationHandler()
             );
         }else {
 
             for (int i = 0; i < comlementClass.length; i++) {
-                if (comlementClass[i].isInstance(returnClass)) {
-                    result = (Item) Proxy.newProxyInstance(
-                            comlementClass[i].getClassLoader(),
-                            comlementClass[i].getInterfaces(),
+                if (comlementClass[i].getClass().isInstance(returnClass.getClass())) {
+                    result = Proxy.newProxyInstance(
+                            comlementClass[i].getClass().getClassLoader(),
+                            comlementClass[i].getClass().getInterfaces(),
                             new ItemInvocationHandler()
                     );
                 }
