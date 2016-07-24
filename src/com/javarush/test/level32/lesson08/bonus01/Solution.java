@@ -37,22 +37,26 @@ public class Solution {
 
         Object result = null;
 
-        //Class<T>[] in = new Class[] {returnClass};
+        Class<T>[] in = new Class[] {returnClass};
+        ClassLoader classLoader = returnClass.getClassLoader();
+        Class[] intfac = returnClass.getInterfaces();
 
         if (comlementClass.length == 0){
             result = Proxy.newProxyInstance(
-                    returnClass.getClass().getClassLoader(),
-                    //new Class[] {returnClass},
-                    returnClass.getClass().getInterfaces(),
+                    returnClass.getClassLoader(),
+                    new Class[] {returnClass},
+                    //returnClass.getInterfaces(),
                     new ItemInvocationHandler()
             );
+            System.out.println(result);
         }else {
 
             for (int i = 0; i < comlementClass.length; i++) {
                 if (comlementClass[i].getClass().isInstance(returnClass.getClass())) {
                     result = Proxy.newProxyInstance(
-                            comlementClass[i].getClass().getClassLoader(),
-                            comlementClass[i].getClass().getInterfaces(),
+                            comlementClass[i].getClassLoader(),
+                            //comlementClass[i].getInterfaces(),
+                            new Class[] {comlementClass[i]},
                             new ItemInvocationHandler()
                     );
                 }
