@@ -1,8 +1,5 @@
 package com.javarush.test.level32.lesson08.bonus01;
 
-import com.javarush.test.level32.lesson08.bonus01.Big;
-import com.javarush.test.level32.lesson08.bonus01.Item;
-import com.javarush.test.level32.lesson08.bonus01.Small;
 
 import java.lang.reflect.Proxy;
 
@@ -17,9 +14,9 @@ public class Solution {
 
     public static void main(String[] args) {
         Solution solution = new Solution();
-        test(solution.getProxy(Item.class));                        //true false false
-        test(solution.getProxy(Item.class, Small.class));           //true false true
-        test(solution.getProxy(Item.class, Big.class, Small.class));//true true true
+        //test(solution.getProxy(Item.class));                        //true false false
+        //test(solution.getProxy(Item.class, Small.class));           //true false true
+        //test(solution.getProxy(Item.class, Big.class, Small.class));//true true true
         test(solution.getProxy(Big.class, Small.class));            //true true true т.к. Big наследуется от Item
         test(solution.getProxy(Big.class));                         //true true false т.к. Big наследуется от Item
     }
@@ -33,36 +30,55 @@ public class Solution {
         System.out.format("%b %b %b\n", isItem, isBig, isSmall);
     }
 
-    public <T extends Class> Object getProxy(T returnClass, T... comlementClass){
+    public <T extends Class> Object getProxy(T... args){
 
         Object result = null;
 
-        Class<T>[] in = new Class[] {returnClass};
-        ClassLoader classLoader = returnClass.getClassLoader();
-        Class[] intfac = returnClass.getInterfaces();
+        for (int i = 0; i < args.length; i++) {
+            if (args[i].getClass().isInstance(Item.class)){
+                ClassLoader cl = args[i].getClassLoader();
+                Class[] interfaces = args[i].getInterfaces();
+                ItemInvocationHandler handler = new ItemInvocationHandler(args[i]);
+                result = Proxy.newProxyInstance(
+                        cl,
+                        interfaces,
+                        handler
+                );
 
-        if (comlementClass.length == 0){
-            result = Proxy.newProxyInstance(
-                    returnClass.getClassLoader(),
-                    new Class[] {returnClass},
-                    //returnClass.getInterfaces(),
-                    new ItemInvocationHandler()
+                break;
+            }
+        }
+
+        //Class<T>[] in = new Class[] {returnClass};
+        //ClassLoader classLoader = returnClass.getClassLoader();
+        //Class[] intfac = returnClass.getInterfaces();
+
+        //Class<T>[] inc = new Class[] {comlementClass[0]};
+        //ClassLoader classLoader1 = comlementClass[0].getClassLoader();
+        //Class[] intfac1 = comlementClass[0].getInterfaces();
+/*
+        if (args[0.length == 0){
+            result = (Item)Proxy.newProxyInstance(
+                    returnClass.getClass().getClassLoader(),
+                    //new Class[] {returnClass},
+                    returnClass.getClass().getInterfaces(),
+                    new ItemInvocationHandler(returnClass)
             );
-            System.out.println(result);
+
         }else {
 
             for (int i = 0; i < comlementClass.length; i++) {
                 if (comlementClass[i].getClass().isInstance(returnClass.getClass())) {
                     result = Proxy.newProxyInstance(
-                            comlementClass[i].getClassLoader(),
-                            //comlementClass[i].getInterfaces(),
-                            new Class[] {comlementClass[i]},
-                            new ItemInvocationHandler()
+                            comlementClass[i].getClass().getClassLoader(),
+                            comlementClass[i].getClass().getInterfaces(),
+                            //new Class[] {comlementClass[i]},
+                            new ItemInvocationHandler(comlementClass[i])
                     );
                 }
             }
         }
-
+*/
         return result;
     }
 }
