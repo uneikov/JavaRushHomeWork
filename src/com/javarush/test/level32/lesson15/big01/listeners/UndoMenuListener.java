@@ -25,6 +25,8 @@ public class UndoMenuListener implements MenuListener {
     @Override
     public void menuSelected(MenuEvent e) {
 
+        undoMenuItem.setEnabled(view.canUndo());
+        redoMenuItem.setEnabled(view.canRedo());
     }
 
     @Override
