@@ -145,7 +145,6 @@ public class View extends JFrame implements ActionListener {
     public void selectHtmlTab(){
         tabbedPane.setSelectedIndex(0);
         resetUndo();
-
     }
 
     public void showAbout(){
