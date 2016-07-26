@@ -136,6 +136,13 @@ public class View extends JFrame implements ActionListener {
 
     public void selectedTabChanged(){
 
+        int tab = tabbedPane.getSelectedIndex();
+        switch (tab){
+            case 0: controller.setPlainText(plainTextPane.getText()); break;
+            case 1: plainTextPane.setText(controller.getPlainText()); break;
+        }
+
+        this.resetUndo();
     }
 
     public boolean isHtmlTabSelected(){
@@ -158,5 +165,14 @@ public class View extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
 
+        String command = e.getActionCommand();
+        switch (command){
+            case "Новый" : controller.createNewDocument();
+            case "Открыть" : controller.openDocument();
+            case "Сохранить" : controller.saveDocument();
+            case "Сохранить как..." : controller.saveDocumentAs();
+            case "Выход" : controller.exit(); break;
+            case "О программе" : this.showAbout(); break;
+        }
     }
 }

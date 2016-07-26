@@ -68,7 +68,10 @@ public class Controller {
 
         view.update();
     }
-
+    public void createNewDocument(){}
+    public void openDocument(){}
+    public void saveDocument(){}
+    public void saveDocumentAs(){}
 
     public static void main(String[] args) {
         View view = new View();
