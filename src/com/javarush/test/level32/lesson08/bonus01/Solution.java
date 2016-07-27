@@ -1,5 +1,8 @@
 package com.javarush.test.level32.lesson08.bonus01;
 
+import com.javarush.test.level32.lesson08.bonus01.Big;
+import com.javarush.test.level32.lesson08.bonus01.Item;
+import com.javarush.test.level32.lesson08.bonus01.Small;
 
 import java.lang.reflect.Proxy;
 
@@ -14,9 +17,9 @@ public class Solution {
 
     public static void main(String[] args) {
         Solution solution = new Solution();
-        //test(solution.getProxy(Item.class));                        //true false false
-        //test(solution.getProxy(Item.class, Small.class));           //true false true
-        //test(solution.getProxy(Item.class, Big.class, Small.class));//true true true
+        test(solution.getProxy(Item.class));                        //true false false
+        test(solution.getProxy(Item.class, Small.class));           //true false true
+        test(solution.getProxy(Item.class, Big.class, Small.class));//true true true
         test(solution.getProxy(Big.class, Small.class));            //true true true т.к. Big наследуется от Item
         test(solution.getProxy(Big.class));                         //true true false т.к. Big наследуется от Item
     }
@@ -30,55 +33,16 @@ public class Solution {
         System.out.format("%b %b %b\n", isItem, isBig, isSmall);
     }
 
-    public <T extends Class> Object getProxy(T... args){
+    public <T extends Item> T getProxy(Class<T> aClass, Class<?>... classes) {
 
-        Object result = null;
+        Class<?>[] interfaces = new Class[classes.length + 1];
+        System.arraycopy(classes, 0, interfaces, 0, classes.length);
+        interfaces[interfaces.length - 1] = aClass;
 
-        for (int i = 0; i < args.length; i++) {
-            if (args[i].getClass().isInstance(Item.class)){
-                ClassLoader cl = args[i].getClassLoader();
-                Class[] interfaces = args[i].getInterfaces();
-                ItemInvocationHandler handler = new ItemInvocationHandler(args[i]);
-                result = Proxy.newProxyInstance(
-                        cl,
-                        interfaces,
-                        handler
-                );
-
-                break;
-            }
-        }
-
-        //Class<T>[] in = new Class[] {returnClass};
-        //ClassLoader classLoader = returnClass.getClassLoader();
-        //Class[] intfac = returnClass.getInterfaces();
-
-        //Class<T>[] inc = new Class[] {comlementClass[0]};
-        //ClassLoader classLoader1 = comlementClass[0].getClassLoader();
-        //Class[] intfac1 = comlementClass[0].getInterfaces();
-/*
-        if (args[0.length == 0){
-            result = (Item)Proxy.newProxyInstance(
-                    returnClass.getClass().getClassLoader(),
-                    //new Class[] {returnClass},
-                    returnClass.getClass().getInterfaces(),
-                    new ItemInvocationHandler(returnClass)
-            );
-
-        }else {
-
-            for (int i = 0; i < comlementClass.length; i++) {
-                if (comlementClass[i].getClass().isInstance(returnClass.getClass())) {
-                    result = Proxy.newProxyInstance(
-                            comlementClass[i].getClass().getClassLoader(),
-                            comlementClass[i].getClass().getInterfaces(),
-                            //new Class[] {comlementClass[i]},
-                            new ItemInvocationHandler(comlementClass[i])
-                    );
-                }
-            }
-        }
-*/
-        return result;
+        return (T) Proxy.newProxyInstance(
+                aClass.getClassLoader(),
+                interfaces,
+                new ItemInvocationHandler()
+        );
     }
 }
