@@ -1,5 +1,8 @@
 package com.javarush.test.level33.lesson05.home03;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.FileReader;
 import java.io.IOException;
 
 /* Десериализация JSON объекта
@@ -12,6 +15,9 @@ import java.io.IOException;
 public class Solution {
 
     public static <T> T convertFromJsonToNormal(String fileName, Class<T> clazz) throws IOException {
-        return null;
+        FileReader reader = new FileReader(fileName);
+        ObjectMapper mapper = new ObjectMapper();
+
+        return mapper.readValue(reader,clazz);
     }
 }
