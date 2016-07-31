@@ -103,6 +103,11 @@ public class Solution {
     }
 
     public static void main(String[] args) {
+
+        Long lll = new Long("0");
+        System.out.println(++lll);
+        System.out.println(++lll);
+
         String[] sa = new String[]{"string array 1", "string array 2"};
         TestClass testClass = new TestClass(100, "text field", sa);
         String result = toXmlWithComment(testClass, "second", "it's a comment");
